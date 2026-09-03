@@ -1,4 +1,3 @@
+out/
+transactions.csv
 *.class
-target/
-*.db
-src/main/resources/keystore.p12
