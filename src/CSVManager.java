@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 
 public class CSVManager {
     private static final String HEADER = "transactionId,type,amount,balanceAfter";
+    // Path identifies the CSV file used to persist ledger transactions.
     private final Path file;
 
     public CSVManager(Path file) {
@@ -17,7 +18,7 @@ public class CSVManager {
 
     public LinkedHashMap<Integer, Transaction> load() throws LedgerPersistenceException {
         LinkedHashMap<Integer, Transaction> ledger = new LinkedHashMap<>();
-        if (!Files.exists(file) || isEmptyFile()) {
+        if (!Files.exists(file)) {
             return ledger;
         }
 
@@ -58,14 +59,6 @@ public class CSVManager {
             }
         } catch (IOException exception) {
             throw new LedgerPersistenceException("Could not save the transaction ledger.", exception);
-        }
-    }
-
-    private boolean isEmptyFile() throws LedgerPersistenceException {
-        try {
-            return Files.size(file) == 0;
-        } catch (IOException exception) {
-            throw new LedgerPersistenceException("Could not inspect the transaction ledger.", exception);
         }
     }
 

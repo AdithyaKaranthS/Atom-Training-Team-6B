@@ -3,7 +3,9 @@ import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 
 public class BankAccount {
+    // LinkedHashMap stores transactions by ID while preserving insertion order.
     private final LinkedHashMap<Integer, Transaction> ledger;
+    // TransactionStack stores transactions in LIFO order for undo operations.
     private final TransactionStack stack;
     private BigDecimal balance;
     private int nextTransactionId;
@@ -11,7 +13,7 @@ public class BankAccount {
     public BankAccount(LinkedHashMap<Integer, Transaction> loadedLedger) {
         ledger = loadedLedger;
         stack = new TransactionStack();
-        balance = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        balance = zeroBalance();
         nextTransactionId = 1;
         rebuildState();
     }
@@ -41,10 +43,9 @@ public class BankAccount {
             throw new TransactionNotFoundException(
                     "Transaction " + transaction.getId() + " was not found in the ledger.");
         }
-        balance = ledger.isEmpty()
-                ? BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
-                : getLastTransaction().getBalanceAfter();
-        nextTransactionId = ledger.isEmpty() ? 1 : getLastTransaction().getId() + 1;
+        balance = transaction.getType() == TransactionType.DEPOSIT
+                ? balance.subtract(transaction.getAmount())
+                : balance.add(transaction.getAmount());
         return transaction;
     }
 
@@ -54,21 +55,6 @@ public class BankAccount {
 
     public LinkedHashMap<Integer, Transaction> getLedger() {
         return ledger;
-    }
-
-    public TransactionStack getStack() {
-        return stack;
-    }
-
-    public Transaction getLastTransaction() throws EmptyLedgerException {
-        if (ledger.isEmpty()) {
-            throw new EmptyLedgerException("There are no transactions recorded.");
-        }
-        Transaction last = null;
-        for (Transaction transaction : ledger.values()) {
-            last = transaction;
-        }
-        return last;
     }
 
     private Transaction record(TransactionType type, BigDecimal amount) {
@@ -91,6 +77,10 @@ public class BankAccount {
         if (amount == null || amount.signum() <= 0) {
             throw new InvalidAmountException("Amount must be a positive number.");
         }
+    }
+
+    private static BigDecimal zeroBalance() {
+        return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
     }
 
     public static String format(BigDecimal value) {

@@ -8,6 +8,7 @@ A console-based Java banking application demonstrating data structures, file per
 - Withdraw money only when sufficient funds are available.
 - Check the current account balance.
 - Display the last `N` transactions in reverse chronological order.
+- Show total deposits and withdrawals in the mini-statement.
 - Undo the most recent transaction using a custom LIFO stack.
 - Persist transactions between sessions in a CSV file.
 - Continue running after invalid menu choices, invalid amounts, insufficient funds, empty-ledger operations, or persistence errors.
@@ -45,11 +46,14 @@ The file is loaded at startup. The ledger, custom stack, current balance, and ne
 
 ## DSA And Design
 
-- `LinkedHashMap<Integer, Transaction>` preserves transaction insertion order.
-- `TransactionStack` is implemented from scratch with linked nodes and supports `push`, `pop`, `peek`, `isEmpty`, and `clear`.
+- `LinkedHashMap<Integer, Transaction>` preserves transaction insertion order for the ledger.
+- `TransactionStack` is implemented from scratch with linked nodes and provides LIFO access for undo operations. It supports `push`, `pop`, `peek`, `isEmpty`, and `clear`.
+- `Stream API` selects the newest `N` transactions for mini-statements and calculates deposit and withdrawal totals.
 - `BigDecimal` stores monetary values to avoid floating-point rounding problems.
 - `CSVManager` owns CSV loading and saving.
 - `BankAccount` owns balance changes, transaction creation, ledger state, and undo behavior.
+
+The source also includes comments documenting each declared data structure and a header summary of the ledger map, custom stack, Stream API, and CSV persistence file.
 
 ## Custom Exceptions
 

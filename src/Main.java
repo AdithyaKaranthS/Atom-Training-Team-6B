@@ -1,8 +1,17 @@
+/*
+ * Data structures and APIs used:
+ * - LinkedHashMap stores transactions in insertion order for the ledger.
+ * - TransactionStack provides LIFO access for undo operations.
+ * - Stream API filters, sorts, limits, and summarizes ledger transactions.
+ * - CSV file persists the ledger between application runs.
+ */
+
 import java.math.BigDecimal;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private static final String CSV_FILE = "transactions.csv";
@@ -15,7 +24,7 @@ public class Main {
         } catch (LedgerPersistenceException exception) {
             System.out.println("Could not load saved data: " + exception.getMessage());
             System.out.println("Starting with a fresh account.");
-            account = new BankAccount(new java.util.LinkedHashMap<>());
+            account = new BankAccount(new LinkedHashMap<>());
         }
 
         System.out.println("Loaded balance: " + BankAccount.format(account.getBalance()));
@@ -33,10 +42,10 @@ public class Main {
             try {
                 switch (choice) {
                     case "1":
-                        deposit(scanner, account, csvManager);
+                        changeBalance(scanner, account, csvManager, true);
                         break;
                     case "2":
-                        withdraw(scanner, account, csvManager);
+                        changeBalance(scanner, account, csvManager, false);
                         break;
                     case "3":
                         System.out.println("Current balance: " + BankAccount.format(account.getBalance()));
@@ -60,21 +69,14 @@ public class Main {
         }
     }
 
-    private static void deposit(Scanner scanner, BankAccount account, CSVManager csvManager)
-            throws InvalidAmountException, LedgerPersistenceException {
-        BigDecimal amount = readAmount(scanner);
-        Transaction transaction = account.deposit(amount);
-        csvManager.save(account.getLedger());
-        System.out.println("Deposit successful. Transaction ID: " + transaction.getId());
-        System.out.println("Balance: " + BankAccount.format(account.getBalance()));
-    }
-
-    private static void withdraw(Scanner scanner, BankAccount account, CSVManager csvManager)
+    private static void changeBalance(Scanner scanner, BankAccount account, CSVManager csvManager,
+                                      boolean deposit)
             throws InvalidAmountException, InsufficientBalanceException, LedgerPersistenceException {
         BigDecimal amount = readAmount(scanner);
-        Transaction transaction = account.withdraw(amount);
+        Transaction transaction = deposit ? account.deposit(amount) : account.withdraw(amount);
         csvManager.save(account.getLedger());
-        System.out.println("Withdrawal successful. Transaction ID: " + transaction.getId());
+        System.out.println((deposit ? "Deposit" : "Withdrawal")
+                + " successful. Transaction ID: " + transaction.getId());
         System.out.println("Balance: " + BankAccount.format(account.getBalance()));
     }
 
@@ -104,15 +106,29 @@ public class Main {
             return;
         }
 
-        List<Transaction> transactions = new ArrayList<>(account.getLedger().values());
-        int firstIndex = Math.max(0, transactions.size() - count);
+        // Stream the newest transactions first and limit the result to the requested count.
+        // List holds the newest transactions selected for display.
+        List<Transaction> transactions = account.getLedger().values().stream()
+            .sorted((left, right) -> Integer.compare(right.getId(), left.getId()))
+            .limit(count)
+            .collect(Collectors.toList());
         System.out.println("ID | TYPE     | AMOUNT | BALANCE AFTER");
-        for (int index = transactions.size() - 1; index >= firstIndex; index--) {
-            Transaction transaction = transactions.get(index);
+        for (Transaction transaction : transactions) {
             System.out.printf("%d | %-8s | %6s | %13s%n", transaction.getId(), transaction.getType(),
                     BankAccount.format(transaction.getAmount()),
                     BankAccount.format(transaction.getBalanceAfter()));
         }
+
+        BigDecimal totalDeposits = account.getLedger().values().stream()
+            .filter(transaction -> transaction.getType() == TransactionType.DEPOSIT)
+            .map(Transaction::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalWithdrawals = account.getLedger().values().stream()
+            .filter(transaction -> transaction.getType() == TransactionType.WITHDRAW)
+            .map(Transaction::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        System.out.println("Total deposits: " + BankAccount.format(totalDeposits));
+        System.out.println("Total withdrawals: " + BankAccount.format(totalWithdrawals));
     }
 
     private static BigDecimal readAmount(Scanner scanner) throws InvalidAmountException {
