@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bank Ledger</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div><p class="eyebrow">PERSONAL FINANCE</p><h1>Bank Ledger</h1></div>
+      <div class="balance"><span>Available balance</span><strong id="balance">Rs. 0.00</strong></div>
+    </header>
+    <section class="workspace">
+      <nav class="tabs" aria-label="Ledger actions">
+        <button class="tab active" data-panel="deposit">Deposit</button>
+        <button class="tab" data-panel="withdraw">Withdraw</button>
+        <button class="tab" data-panel="balancePanel">Check balance</button>
+        <button class="tab" data-panel="statement">Mini-statement</button>
+        <button class="tab" data-panel="undo">Undo</button>
+      </nav>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <section id="deposit" class="panel active">
+        <p class="section-label">Add funds</p><h2>Make a deposit</h2>
+        <form data-action="deposit"><label for="depositAmount">Amount</label><div class="amount-input"><span>Rs.</span><input id="depositAmount" name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></div><button class="primary" type="submit">Deposit funds</button></form>
+      </section>
+      <section id="withdraw" class="panel">
+        <p class="section-label">Move funds</p><h2>Make a withdrawal</h2>
+        <form data-action="withdraw"><label for="withdrawAmount">Amount</label><div class="amount-input"><span>Rs.</span><input id="withdrawAmount" name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00"></div><button class="primary" type="submit">Withdraw funds</button></form>
+      </section>
+      <section id="balancePanel" class="panel">
+        <p class="section-label">Account overview</p><h2>Check balance</h2>
+        <p class="supporting">Your current available balance is shown below.</p><strong id="balancePanelValue" class="balance-large">Rs. 0.00</strong>
+      </section>
+      <section id="statement" class="panel">
+        <p class="section-label">Your activity</p><h2>Mini-statement</h2>
+        <form id="statementForm" class="inline-form"><label for="count">Transactions to show</label><input id="count" type="number" min="1" step="1" value="5"><button class="secondary" type="submit">Refresh</button></form>
+        <div class="table-wrap"><table><thead><tr><th>Type</th><th>Amount</th><th>Balance after</th></tr></thead><tbody id="transactions"><tr><td colspan="3" class="empty">No transactions yet.</td></tr></tbody></table></div>
+      </section>
+      <section id="undo" class="panel">
+        <p class="section-label">Correct an entry</p><h2>Undo latest transaction</h2><p class="supporting">This removes the most recent deposit or withdrawal and restores the previous balance.</p><button id="undoButton" class="danger" type="button">Undo transaction</button>
+      </section>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

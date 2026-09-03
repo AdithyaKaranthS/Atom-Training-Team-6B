@@ -1,6 +1,6 @@
 # Bank Account & Transaction Ledger
 
-A Java Swing desktop application for managing a simple bank account. It supports deposits, withdrawals, balance checking, a reverse-chronological mini-statement, and undoing the most recent transaction.
+A persistent Spring Boot web application for managing a simple bank account. It supports deposits, withdrawals, balance checking, a reverse-chronological mini-statement, and undoing the most recent transaction.
 
 The project demonstrates core Java OOP concepts along with `LinkedHashMap` and a custom linked-list stack. It does **not** use `java.util.Stack`.
 
@@ -17,31 +17,48 @@ The project demonstrates core Java OOP concepts along with `LinkedHashMap` and a
 ## Requirements
 
 - Java Development Kit (JDK) 17 or later
-- No external libraries are required
+- Maven 3.9 or later
 
-## Run the application
+## Run over HTTPS
 
-Open PowerShell or Command Prompt in this project folder and run:
+Generate the local self-signed certificate once from the project folder. The password and alias must match `application.properties`:
 
 ```powershell
-javac *.java
-java MainGUI
+New-Item -ItemType Directory -Force src\main\resources | Out-Null
+keytool -genkeypair -alias bankledger -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore src\main\resources\keystore.p12 -validity 3650 -storepass changeit -keypass changeit -dname "CN=localhost"
+mvn spring-boot:run
 ```
+
+Open https://localhost:8443. A self-signed certificate causes a browser warning locally; that is expected for this development/assignment setup. The CSV ledger is stored at `./data/ledger.csv`, so the balance and complete transaction ledger survive application restarts. The undo stack is rebuilt from persisted transaction IDs on startup.
+
+## Package for sharing
+
+Build the standalone executable JAR:
+
+```powershell
+mvn clean package
+Copy-Item target\bank-ledger-web-1.0.0.jar bank-ledger-web.jar
+java -jar bank-ledger-web.jar
+```
+
+Anyone with JDK 17 or later can run `bank-ledger-web.jar`; Maven is not required. Open https://localhost:8443 after startup. The JAR includes the local development certificate and frontend. The `data` folder is created beside the JAR and stores the CSV ledger.
 
 ## Project structure
 
 | File | Purpose |
 | --- | --- |
-| `MainGUI.java` | Swing user interface, navigation, forms, status messages, and transaction table. This is the main entry point. |
-| `BankAccount.java` | Account business logic: deposit, withdraw, ledger maintenance, and undo. |
-| `Transaction.java` | Immutable object that stores one transaction's ID, type, amount, and balance after completion. |
-| `TransactionType.java` | Enum containing the valid types: `DEPOSIT` and `WITHDRAW`. |
-| `TransactionStack.java` | Custom linked-list stack used for LIFO undo functionality. |
-| `BankAccountLedger.java` | Compatibility launcher that opens `MainGUI`. |
+| `pom.xml` | Maven build and Spring Boot dependencies. |
+| `src/main/java/com/atomtraining/bankledger/BankLedgerApplication.java` | Spring Boot application entry point. |
+| `src/main/java/com/atomtraining/bankledger/BankAccountController.java` | REST endpoints for all account operations. |
+| `src/main/java/com/atomtraining/bankledger/BankAccountService.java` | Account rules, persistent ledger, and undo-stack reconstruction. |
+| `src/main/java/com/atomtraining/bankledger/Transaction.java` | Domain transaction used by the ledger and custom stack. |
+| `src/main/java/com/atomtraining/bankledger/TransactionStack.java` | Hand-written linked-list stack used for LIFO undo functionality. |
+| `src/main/resources/static/` | Browser interface served by Spring Boot. |
+| `data/ledger.csv` | CSV transaction ledger created at runtime. |
 
 ## How the transaction ledger works
 
-`BankAccount` maintains the history using:
+`BankAccountService` maintains the history using:
 
 ```java
 LinkedHashMap<Integer, Transaction> ledger
@@ -69,11 +86,10 @@ The custom stack supports `push()`, `pop()`, `peek()`, and `isEmpty()`.
 
 ## User interface
 
-The interface uses a `JFrame` with:
+The browser interface uses:
 
 - A header that permanently displays the available balance.
-- A left-side navigation panel.
-- A right-side `CardLayout` that switches between Deposit, Withdraw, Check Balance, Mini-Statement, and Undo screens.
+- Tabs that switch between Deposit, Withdraw, Check Balance, Mini-Statement, and Undo screens.
 - Inline green success messages and red validation/error messages.
 
 ## Validation handled

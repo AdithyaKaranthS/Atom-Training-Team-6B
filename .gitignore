@@ -1,1 +1,6 @@
 *.class
+target/
+*.jar
+data/
+*.db
+src/main/resources/keystore.p12

@@ -1,4 +1,6 @@
-/** Immutable record of one completed banking operation. */
+package com.atomtraining.bankledger;
+
+/** Domain transaction used by the ordered ledger and custom undo stack. */
 public class Transaction {
     private final int id;
     private final TransactionType type;
@@ -11,6 +13,7 @@ public class Transaction {
         this.amount = amount;
         this.balanceAfterTransaction = balanceAfterTransaction;
     }
+
     public int getId() { return id; }
     public TransactionType getType() { return type; }
     public double getAmount() { return amount; }
