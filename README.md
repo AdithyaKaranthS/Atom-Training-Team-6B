@@ -16,10 +16,10 @@ A simple Java console application that simulates a bank account and maintains a 
 
 The application is split into focused source files:
 
-- [Transaction.java](Transaction.java): Stores transaction details and timestamps.
-- [CustomStack.java](CustomStack.java): Generic stack used to support undo operations.
-- [BankAccount.java](BankAccount.java): Manages the balance, ledger, and transaction history.
-- [Main.java](Main.java): Provides the interactive console menu and application entry point.
+- [Transaction.java](src/com/atomtraining/bank/Transaction.java): Stores transaction details and timestamps.
+- [CustomStack.java](src/com/atomtraining/bank/CustomStack.java): Generic stack used to support undo operations.
+- [BankAccount.java](src/com/atomtraining/bank/BankAccount.java): Manages the balance, ledger, and transaction history.
+- [Main.java](src/com/atomtraining/bank/Main.java): Provides the interactive console menu and application entry point.
 
 ## Requirements
 
@@ -29,16 +29,16 @@ The application uses switch expressions with arrow labels, which require Java 14
 
 ## Run the Application
 
-From the project directory, compile the source file:
+From the project directory, compile the source files into an output directory:
 
 ```bash
-javac *.java
+javac -d out src/com/atomtraining/bank/*.java
 ```
 
 Then start the application:
 
 ```bash
-java Main
+java -cp out com.atomtraining.bank.Main
 ```
 
 ## Menu Options

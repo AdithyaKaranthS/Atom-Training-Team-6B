@@ -1,3 +1,5 @@
+package com.atomtraining.bank;
+
 import java.util.List;
 import java.util.Scanner;
 
