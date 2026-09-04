@@ -1,5 +1,3 @@
-package com.atomtraining.bank;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,8 +50,8 @@ class BankAccount {
             throw new IllegalArgumentException("Withdrawal amount must be greater than zero.");
         }
         if (amount > balance) {
-            // EXCEPTION: IllegalStateException reports insufficient available funds.
-            throw new IllegalStateException(String.format(
+            // EXCEPTION: The custom exception identifies withdrawals that exceed the available balance.
+            throw new InsufficientFundsException(String.format(
                     "Insufficient funds! Current balance is $%,.2f, but attempted to withdraw $%,.2f.", balance, amount));
         }
         balance -= amount;

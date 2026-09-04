@@ -1,5 +1,3 @@
-package com.atomtraining.bank;
-
 import java.util.EmptyStackException;
 
 // DATA TYPE: A generic stack can store any object type supplied as T.

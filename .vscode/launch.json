@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "preLaunchTask": "compile-java",
+            "mainClass": "Main",
+            "classPaths": [
+                "${workspaceFolder}/src"
+            ],
+            "sourcePaths": [
+                "${workspaceFolder}/src"
+            ]
+        }
+    ]
+}

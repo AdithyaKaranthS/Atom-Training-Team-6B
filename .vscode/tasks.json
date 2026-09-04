@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "compile-java",
+            "type": "process",
+            "command": "javac",
+            "args": [
+                "-d",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/BankAccount.java",
+                "${workspaceFolder}/src/CustomStack.java",
+                "${workspaceFolder}/src/InsufficientFundsException.java",
+                "${workspaceFolder}/src/Main.java",
+                "${workspaceFolder}/src/Transaction.java"
+            ],
+            "problemMatcher": [
+                "$javac"
+            ],
+            "group": "build"
+        }
+    ]
+}

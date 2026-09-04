@@ -1,5 +1,3 @@
-package com.atomtraining.bank;
-
 import java.util.List;
 import java.util.Scanner;
 
@@ -77,8 +75,11 @@ class Main {
             System.out.println("\n[SUCCESS] Withdrawal successful!");
             System.out.printf("Withdrawn: $%,.2f | Remaining Balance: $%,.2f | Transaction ID: #%d%n",
                     txn.getAmount(), txn.getBalanceAfterTransaction(), txn.getTransactionId());
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            // EXCEPTIONS: Multi-catch handles invalid amounts and insufficient funds.
+        } catch (InsufficientFundsException e) {
+            // EXCEPTION: Reports an attempted withdrawal larger than the current balance.
+            System.out.println("\n[ERROR] " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            // EXCEPTION: Handles zero or negative withdrawal amounts.
             System.out.println("\n[ERROR] " + e.getMessage());
         }
     }

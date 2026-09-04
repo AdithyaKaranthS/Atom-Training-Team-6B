@@ -16,10 +16,10 @@ A simple Java console application that simulates a bank account and maintains a 
 
 The application is split into focused source files:
 
-- [Transaction.java](src/com/atomtraining/bank/Transaction.java): Stores transaction details and timestamps.
-- [CustomStack.java](src/com/atomtraining/bank/CustomStack.java): Generic stack used to support undo operations.
-- [BankAccount.java](src/com/atomtraining/bank/BankAccount.java): Manages the balance, ledger, and transaction history.
-- [Main.java](src/com/atomtraining/bank/Main.java): Provides the interactive console menu and application entry point.
+- [Transaction.java](src/Transaction.java): Stores transaction details and timestamps.
+- [CustomStack.java](src/CustomStack.java): Generic stack used to support undo operations.
+- [BankAccount.java](src/BankAccount.java): Manages the balance, ledger, and transaction history.
+- [Main.java](src/Main.java): Provides the interactive console menu and application entry point.
 
 ## Requirements
 
@@ -29,16 +29,16 @@ The application uses switch expressions with arrow labels, which require Java 14
 
 ## Run the Application
 
-From the project directory, compile the source files into an output directory:
+From the project directory, compile the source files into `src`:
 
 ```bash
-javac -d out src/com/atomtraining/bank/*.java
+javac -d src src/*.java
 ```
 
 Then start the application:
 
 ```bash
-java -cp out com.atomtraining.bank.Main
+java -cp src Main
 ```
 
 ## Menu Options
@@ -66,7 +66,7 @@ java -cp out com.atomtraining.bank.Main
 ## Exceptions Used
 
 - `IllegalArgumentException`: Rejects negative opening balances, non-positive deposits or withdrawals, and invalid transaction counts.
-- `IllegalStateException`: Reports withdrawal attempts when the account has insufficient funds.
+- `InsufficientFundsException`: Reports withdrawal attempts when the account has insufficient funds.
 - `NumberFormatException`: Handles text that cannot be converted into an integer or decimal number during user input.
 - `EmptyStackException`: Prevents `CustomStack.pop()` and `CustomStack.peek()` from being used when the stack is empty.
 
