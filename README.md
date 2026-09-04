@@ -52,6 +52,34 @@ java Main
 | 5 | Undo the last transaction |
 | 6 | Exit the application |
 
+## Data Types Used
+
+- `int`: Transaction IDs, transaction counts, stack size, and menu input.
+- `double`: Account balances and transaction amounts.
+- `String`: User prompts, messages, formatted currency, and timestamps.
+- `enum Transaction.Type`: Represents `DEPOSIT` and `WITHDRAW` transaction types.
+- `LocalDateTime`: Stores the date and time when each transaction is created.
+- `LinkedHashMap<Integer, Transaction>`: Maintains the transaction ledger in insertion order.
+- `List<Transaction>`: Stores the transactions returned for a mini-statement.
+- `CustomStack<Transaction>`: Generic LIFO stack used to undo transactions.
+
+## Exceptions Used
+
+- `IllegalArgumentException`: Rejects negative opening balances, non-positive deposits or withdrawals, and invalid transaction counts.
+- `IllegalStateException`: Reports withdrawal attempts when the account has insufficient funds.
+- `NumberFormatException`: Handles text that cannot be converted into an integer or decimal number during user input.
+- `EmptyStackException`: Prevents `CustomStack.pop()` and `CustomStack.peek()` from being used when the stack is empty.
+
+## Stream API Used
+
+`BankAccount.getLastNTransactions()` uses the Java Stream API to create a stream from the ledger, skip older transactions, and collect the requested results into a list:
+
+- `stream()`: Creates a stream from the ledger values.
+- `skip()`: Ignores older transactions when more than `N` transactions exist.
+- `collect(Collectors.toList())`: Converts the stream results into a `List<Transaction>`.
+
+The mini-statement uses `List.forEach()` with a lambda expression to print each transaction.
+
 ## Notes
 
 - Transactions are stored in memory and are lost when the application exits.
