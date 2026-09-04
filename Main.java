@@ -9,7 +9,7 @@ class Main {
     public static void main(String[] args) {
         System.out.println("==========================================================");
         System.out.println(" Welcome to the Bank Account & Transaction Ledger");
-        System.out.println(" Initialized demo account with $1,000.00 opening balance.");
+        System.out.println(" Initialized demo account with $0.00 opening balance.");
         System.out.println("==========================================================");
 
         boolean running = true;
