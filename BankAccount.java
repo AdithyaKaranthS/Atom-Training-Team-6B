@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 // Manages the account balance and the active transaction history.
 class BankAccount {
 
+    // ENCAPSULATION: Private fields hide account data; public methods control how it is accessed and changed.
     // DATA TYPE: double stores the account balance.
     private double balance;
     // DATA TYPES: LinkedHashMap preserves transaction insertion order; Integer is the key type.

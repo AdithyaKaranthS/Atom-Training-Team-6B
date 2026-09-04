@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 // DATA TYPE: Transaction is the data model for one deposit or withdrawal.
 class Transaction {
 
+    // ENCAPSULATION: Private final fields protect transaction data from direct external modification.
     public enum Type {
         DEPOSIT, WITHDRAW
     }
@@ -58,6 +59,7 @@ class Transaction {
         return timestamp.format(FORMATTER);
     }
 
+    // POLYMORPHISM: This implementation overrides Object.toString() and is selected when a Transaction is displayed as text.
     @Override
     public String toString() {
         return String.format("[Txn ID: %d] %-8s | Amount: $%,.2f | Balance: $%,.2f | Time: %s",

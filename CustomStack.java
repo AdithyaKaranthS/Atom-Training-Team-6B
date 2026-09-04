@@ -3,6 +3,7 @@ import java.util.EmptyStackException;
 // DATA TYPE: A generic stack can store any object type supplied as T.
 class CustomStack<T> {
 
+    // ENCAPSULATION: The stack's internal nodes and size are hidden behind push, pop, peek, and size methods.
     private static class Node<T> {
 
         // DATA TYPE: T is the value stored in this node.
