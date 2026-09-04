@@ -1,67 +1,60 @@
-# Bank Account & Transaction Ledger
+# Banking App
 
-A console-based Java banking application demonstrating data structures, file persistence, object-oriented design, and custom exception handling.
+A simple Java console application that simulates a bank account and maintains a transaction ledger.
 
 ## Features
 
-- Deposit money and record the resulting balance.
-- Withdraw money only when sufficient funds are available.
-- Check the current account balance.
-- Display the last `N` transactions in reverse chronological order.
-- Show total deposits and withdrawals in the mini-statement.
-- Undo the most recent transaction using a custom LIFO stack.
-- Persist transactions between sessions in a CSV file.
-- Continue running after invalid menu choices, invalid amounts, insufficient funds, empty-ledger operations, or persistence errors.
-- Report and skip malformed CSV rows without discarding valid rows.
+- Starts with a demo balance of `$0.00`.
+- Deposit money into the account.
+- Withdraw money when sufficient funds are available.
+- Check the current balance and active transaction count.
+- Display the most recent transactions in chronological order.
+- Undo the most recent deposit or withdrawal using a custom LIFO stack.
+- Validate invalid amounts, malformed input, negative opening balances, and insufficient funds.
 
-## Run
+## Project Structure
 
-From the project root with JDK 8 or newer:
+The application is split into focused source files:
 
-```text
-javac -d out src/*.java
-java -cp out Main
+- [Transaction.java](Transaction.java): Stores transaction details and timestamps.
+- [CustomStack.java](CustomStack.java): Generic stack used to support undo operations.
+- [BankAccount.java](BankAccount.java): Manages the balance, ledger, and transaction history.
+- [Main.java](Main.java): Provides the interactive console menu and application entry point.
+
+## Requirements
+
+- Java Development Kit (JDK) 14 or newer.
+
+The application uses switch expressions with arrow labels, which require Java 14 or newer.
+
+## Run the Application
+
+From the project directory, compile the source file:
+
+```bash
+javac *.java
 ```
 
-The application displays this menu:
+Then start the application:
 
-```text
-1. Deposit
-2. Withdraw
-3. Check Balance
-4. Mini-Statement
-5. Undo Last Transaction
-6. Exit
+```bash
+java Main
 ```
 
-## Persistence
+## Menu Options
 
-Transactions are stored in `transactions.csv` in the project root using this format:
+| Option | Action |
+| --- | --- |
+| 1 | Deposit money |
+| 2 | Withdraw money |
+| 3 | Check the balance |
+| 4 | View a mini-statement of recent transactions |
+| 5 | Undo the last transaction |
+| 6 | Exit the application |
 
-```text
-transactionId,type,amount,balanceAfter
-```
+## Notes
 
-The file is loaded at startup. The ledger, custom stack, current balance, and next transaction ID are rebuilt from the saved rows. Deposit, withdrawal, and undo operations rewrite the CSV so it reflects the current ledger. A missing or empty file starts a fresh account with a balance of `0.00`.
-
-## DSA And Design
-
-- `LinkedHashMap<Integer, Transaction>` preserves transaction insertion order for the ledger.
-- `TransactionStack` is implemented from scratch with linked nodes and provides LIFO access for undo operations. It supports `push`, `pop`, `peek`, `isEmpty`, and `clear`.
-- `Stream API` selects the newest `N` transactions for mini-statements and calculates deposit and withdrawal totals.
-- `BigDecimal` stores monetary values to avoid floating-point rounding problems.
-- `CSVManager` owns CSV loading and saving.
-- `BankAccount` owns balance changes, transaction creation, ledger state, and undo behavior.
-
-The source also includes comments documenting each declared data structure and a header summary of the ledger map, custom stack, Stream API, and CSV persistence file.
-
-## Custom Exceptions
-
-- `InvalidAmountException`: the amount is missing, non-numeric, zero, or negative.
-- `InsufficientBalanceException`: a withdrawal exceeds the current balance.
-- `EmptyLedgerException`: a mini-statement or undo is requested with no transactions.
-- `TransactionNotFoundException`: an undo operation cannot find its transaction in the ledger.
-- `CorruptedLedgerFileException`: a CSV row has invalid fields or values.
-- `LedgerPersistenceException`: the CSV file cannot be read, inspected, or saved.
-
-All exceptions are handled with user-friendly messages so the program returns to the menu instead of printing a raw stack trace.
+- Transactions are stored in memory and are lost when the application exits.
+- The account balance and transaction amounts use `double` for simplicity; production banking software should use `BigDecimal` for monetary values.
+- Undo removes the reversed transaction from the active ledger and restores the previous balance.
+- The account is currently initialized with `$0.00` in `Main.java`. The startup banner still displays a `$1,000.00` opening balance and should be updated in the source if that message is intended to be accurate.
