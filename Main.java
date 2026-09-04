@@ -7,10 +7,10 @@ class Main {
     private static final BankAccount account = new BankAccount(0);
 
     public static void main(String[] args) {
-        System.out.println("=================================================");
+        System.out.println("==========================================================");
         System.out.println(" Welcome to the Bank Account & Transaction Ledger");
         System.out.println(" Initialized demo account with $1,000.00 opening balance.");
-        System.out.println("=================================================");
+        System.out.println("==========================================================");
 
         boolean running = true;
         while (running) {
